@@ -18,8 +18,6 @@ RUN rustup component add clippy; \
     cargo install diesel_cli; \
     cargo install --force cargo-audit
 
-ENV RUSTFLAGS=-Clinker=musl-gcc
-
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
