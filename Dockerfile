@@ -14,6 +14,8 @@ RUN apt-get update; \
 
 RUN rustup target add x86_64-unknown-linux-musl
 
+ENV RUSTFLAGS=-Clinker=musl-gcc
+
 RUN rustup component add clippy; \
     cargo install diesel_cli; \
     cargo install --force cargo-audit
