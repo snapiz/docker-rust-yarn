@@ -14,12 +14,13 @@ RUN apt-get update; \
 
 RUN rustup target add x86_64-unknown-linux-musl
 
-ENV RUSTFLAGS=-Clinker=musl-gcc
+#ENV RUSTFLAGS=-Clinker=musl-gcc
 
 RUN rustup component add clippy; \
     cargo install diesel_cli; \
     cargo install --force cargo-audit
 
+# Nodejs
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
@@ -62,6 +63,7 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
+# Yarn
 ENV YARN_VERSION 1.19.1
 
 RUN set -ex \
@@ -80,3 +82,19 @@ RUN set -ex \
   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
   && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
+
+
+# Cache
+RUN USER=root cargo new cargo-app-cache
+
+# We want dependencies cached, so copy those first.
+COPY Cargo.toml cargo-app-cache/
+COPY Cargo.lock cargo-app-cache/
+
+WORKDIR /cargo-app-cache
+
+# This is a dummy build to get the dependencies cached.
+RUN cargo build --release
+RUN RUSTFLAGS=-Clinker=musl-gcc cargo build --release --target=x86_64-unknown-linux-musl
+RUN cargo clippy --all-targets --all-features -- -D warnings
+RUN cargo test
