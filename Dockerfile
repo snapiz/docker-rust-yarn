@@ -82,19 +82,3 @@ RUN set -ex \
   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
   && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
-
-
-# Cache
-RUN USER=root cargo new cargo-app-cache
-
-# We want dependencies cached, so copy those first.
-COPY Cargo.toml cargo-app-cache/
-COPY Cargo.lock cargo-app-cache/
-
-WORKDIR /cargo-app-cache
-
-# This is a dummy build to get the dependencies cached.
-RUN cargo build --release
-RUN RUSTFLAGS=-Clinker=musl-gcc cargo build --release --target=x86_64-unknown-linux-musl
-RUN cargo clippy --all-targets --all-features -- -D warnings
-RUN cargo test
