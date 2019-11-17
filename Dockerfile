@@ -9,8 +9,7 @@ RUN apt-get update; \
     libgconf-2-4 \
     libnss3 \
     libxss1 \
-    libasound2 \
-    clang
+    libasound2
 
 RUN rustup target add x86_64-unknown-linux-musl
 
