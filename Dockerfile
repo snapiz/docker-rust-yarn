@@ -9,13 +9,9 @@ RUN apt-get update; \
     libgconf-2-4 \
     libnss3 \
     libxss1 \
-    libasound2 \
-    pkg-config \
-    libssl-dev
+    libasound2
 
 RUN rustup target add x86_64-unknown-linux-musl
-
-#ENV RUSTFLAGS=-Clinker=musl-gcc
 
 RUN rustup component add clippy; \
     cargo install diesel_cli; \
