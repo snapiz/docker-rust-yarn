@@ -1,4 +1,4 @@
-FROM rust:latest
+FROM rust:1.40
 
 RUN apt-get update; \
     apt-get install -y xvfb \
@@ -9,7 +9,8 @@ RUN apt-get update; \
     libgconf-2-4 \
     libnss3 \
     libxss1 \
-    libasound2
+    libasound2 \
+    libssl-dev
 
 RUN rustup target add x86_64-unknown-linux-musl
 
