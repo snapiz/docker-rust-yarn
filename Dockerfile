@@ -10,6 +10,7 @@ RUN apt-get update; \
     libnss3 \
     libxss1 \
     libasound2 \
+    pkg-config \
     libssl-dev
 
 RUN rustup target add x86_64-unknown-linux-musl
